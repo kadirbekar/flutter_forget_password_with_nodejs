@@ -31,7 +31,6 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
 
   @override
   Widget build(BuildContext context) {
-
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
 
@@ -41,38 +40,39 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
         key: _scaffoldKey,
         appBar: appbar,
         body: Consumer<RequestState>(
-          builder: (context,requestState,widget) => requestState.isFetching ? Center(child: CircularProgressIndicator()) : Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Colors.orange[100],
-                  Colors.blueAccent[100]
-                ]
-              ),
-            ),
-            padding: const EdgeInsets.all(12),
-            alignment: Alignment.center,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                saveUser(requestState),
-                const SizedBox(height: 15),
-                forgetPassword(requestState),
-                const SizedBox(height: 15),
-                checkUser(requestState),
-              ],
-            ),
-          ),
+          builder: (context, requestState, widget) => requestState.isFetching
+              ? Center(child: CircularProgressIndicator())
+              : Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [Colors.orange[100], Colors.blueAccent[100]]),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  alignment: Alignment.center,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      saveUser(requestState),
+                      const SizedBox(height: 15),
+                      forgetPassword(requestState),
+                      const SizedBox(height: 15),
+                      checkUser(requestState),
+                    ],
+                  ),
+                ),
         ),
       ),
     );
   }
 
   Widget get appbar => AppBar(
-        title: Text("Forget Password with Node.js",style: Styles.instance.snackbarTitleStyle,),
+        title: Text(
+          "Forget Password with Node.js",
+          style: Styles.instance.snackbarTitleStyle,
+        ),
         backgroundColor: Colors.teal,
         centerTitle: true,
       );
@@ -80,19 +80,27 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
   Widget saveUser(RequestState requestState) => DefaultOutlineButton(
         onPressed: () {
           CustomShowDialog.instance.showFormDialog(
-            context,requestState,SaveUser(formKey: _formKey,emailController: _emailController,passwordController: _passwordController,screenHeight: screenHeight,),
-            acceptButton: () async {
-              if(_formKey.currentState.validate()) {
-                _formKey.currentState.save();
-                Navigator.of(context).pop();
-                await apiService.saveUser(User(mail: _emailController.text,password: _passwordController.text)).then((value){
-                    showSnackbarMessage(value.message, value.ok ? true : false);
-                    _emailController.clear();
-                    _passwordController.clear();
-                });
-              }
+              context,
+              requestState,
+              SaveUser(
+                formKey: _formKey,
+                emailController: _emailController,
+                passwordController: _passwordController,
+                screenHeight: screenHeight,
+              ), acceptButton: () async {
+            if (_formKey.currentState.validate()) {
+              _formKey.currentState.save();
+              Navigator.of(context).pop();
+              await apiService.saveUser(User(
+                      mail: _emailController.text,
+                      password: _passwordController.text)).then((value) {
+                showSnackbarMessage(value.message, value.ok ? true : false);
+                _emailController.clear();
+                _passwordController.clear();
+              });
             }
-          );},
+          });
+        },
         height: screenHeight * 0.09,
         width: double.infinity,
         buttonLabel: 'Save User',
@@ -107,18 +115,21 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
   Widget forgetPassword(RequestState requestState) => DefaultOutlineButton(
         onPressed: () {
           CustomShowDialog.instance.showFormDialog(
-            context,requestState,ForgetPassword(screenHeight: screenHeight,emailController:_emailController,formKey: _formKey),
-            acceptButton: () async {
-              if(_formKey.currentState.validate()) {
-                _formKey.currentState.save();
-                Navigator.of(context).pop();
-                await apiService.forgetPassword(_emailController.text).then((value){
-                  showSnackbarMessage(value.message, value.ok ? true : false);
-                  _emailController.clear();
-                });
-              }
+              context,
+              requestState,
+              ForgetPassword(
+                  screenHeight: screenHeight,
+                  emailController: _emailController,
+                  formKey: _formKey), acceptButton: () async {
+            if (_formKey.currentState.validate()) {
+              _formKey.currentState.save();
+              Navigator.of(context).pop();
+              await apiService.forgetPassword(_emailController.text).then((value) {
+                showSnackbarMessage(value.message, value.ok ? true : false);
+                _emailController.clear();
+              });
             }
-          );
+          });
         },
         buttonLabel: 'Forget Password',
         height: screenHeight * 0.09,
@@ -134,19 +145,28 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
   Widget checkUser(RequestState requestState) => DefaultOutlineButton(
         onPressed: () {
           CustomShowDialog.instance.showFormDialog(
-            context,requestState,CheckUser(formKey: _formKey,emailController: _emailController,passwordController: _passwordController,screenHeight: screenHeight,),
-            acceptButton: () async {
-              if(_formKey.currentState.validate()) {
-                _formKey.currentState.save();
-                Navigator.of(context).pop();
-                await apiService.checkUser(User(mail: _emailController.text,password: _passwordController.text)).then((value){
-                    showSnackbarMessage(value.message, value.ok ? true : false);
-                    _emailController.clear();
-                    _passwordController.clear();
-                });
-              }
+              context,
+              requestState,
+              CheckUser(
+                formKey: _formKey,
+                emailController: _emailController,
+                passwordController: _passwordController,
+                screenHeight: screenHeight,
+              ), acceptButton: () async {
+            if (_formKey.currentState.validate()) {
+              _formKey.currentState.save();
+              Navigator.of(context).pop();
+              await apiService
+                  .checkUser(User(
+                      mail: _emailController.text,
+                      password: _passwordController.text))
+                  .then((value) {
+                showSnackbarMessage(value.message, value.ok ? true : false);
+                _emailController.clear();
+                _passwordController.clear();
+              });
             }
-          );
+          });
         },
         height: screenHeight * 0.09,
         width: double.infinity,
@@ -159,12 +179,29 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
         ),
       );
 
-  showSnackbarMessage(String message,bool messageType){
-      _scaffoldKey.currentState.showSnackBar(SnackBar(content: Row(children: [
-      messageType ? Icon(Icons.done_outline,color: Colors.green,size: 30,) : 
-      Icon(Icons.error_outline,color: Colors.red,size: 30,),
-      const SizedBox(width: 20,),
-      Text(message,style: Styles.instance.snackbarTitleStyle,)
-    ],)));
+  showSnackbarMessage(String message, bool messageType) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Row(
+        children: [
+          messageType
+              ? Icon(
+                  Icons.done_outline,
+                  color: Colors.green,
+                  size: 30,
+                )
+              : Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 30,
+                ),
+          const SizedBox(width: 20),
+          Text(
+            message,
+            style: Styles.instance.snackbarTitleStyle,
+          )
+        ],
+      ),
+      duration: Duration(milliseconds: 1100),
+    ));
   }
 }

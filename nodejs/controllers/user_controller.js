@@ -40,16 +40,16 @@ const forgetPassword = async (req, res) => {
             const newPassword = common_methods.generateRandomPassword()
             const updatedUser = await User.findOneAndUpdate({ mail: req.params.mail }, {
                 $set: {
-                    password: newPassword
+                    password: newPassword.toUpperCase()
                 }
             }, { lean: true })
 
             if (updatedUser) {
                 //  password updated successfully
-                common_methods.sendMail(req.params.mail, newPassword)
+                common_methods.sendMail(req.params.mail, newPassword.toUpperCase())
                 return res.status(201).json({
                     ok: true,
-                    message: messages.returnMessages.MAIL_SUCCESS
+                    message: messages.returnMessages.MAIL_SUCCESS +" "+ newPassword.toUpperCase()
                 });
             }
 

@@ -1,5 +1,5 @@
 const returnMessages = {
-    MAIL_SUCCESS : "Mail sent successfully.",
+    MAIL_SUCCESS : "New Password : ",
     SERVER_ERROR: "Something went wrong, try it later.",
     ERROR_OCCURRED : "An error occurred during process.",
     PROCESS_SUCCESS : "Process finished successfully.",

@@ -3,8 +3,8 @@ const nodemailer = require('nodemailer')
 //  create random password
 function generateRandomPassword() {
     var password = "";
-    for (let index = 0; index < 8; index++) {
-        if (password.length <= 8) {
+    for (let index = 0; index < 3; index++) {
+        if (password.length <= 3) {
             password += ('a1bc2çd3ef4gğ5hı7ij8kl0mn8oö9prsştyuüvyzwx').split('')[(Math.floor(Math.random() * 26))];
         }
     }

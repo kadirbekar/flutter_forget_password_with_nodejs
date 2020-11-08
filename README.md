@@ -1,9 +1,17 @@
 # Forget password in Flutter with Node.js and MongoDB
 
-![create_user1](https://user-images.githubusercontent.com/34074484/98465582-ed22cc80-21da-11eb-987c-821bf2e1a5d4.png)
-![create_user2](https://user-images.githubusercontent.com/34074484/98465584-ee53f980-21da-11eb-940a-581a3f0d073b.png)
-![create_user3](https://user-images.githubusercontent.com/34074484/98465585-ef852680-21da-11eb-9e6e-511ed2b8b3a6.png)
-![check_user1](https://user-images.githubusercontent.com/34074484/98465586-f0b65380-21da-11eb-87d4-8ae30d017ac6.png)
-![check_user2](https://user-images.githubusercontent.com/34074484/98465587-f2801700-21da-11eb-8e01-c18361f36f53.png)
-![forget_password1](https://user-images.githubusercontent.com/34074484/98465589-f3b14400-21da-11eb-952c-6717b142b155.png)
-![forget_password2](https://user-images.githubusercontent.com/34074484/98465591-f57b0780-21da-11eb-911b-6c972eee95b8.png)
+If you want to test the project, make sure that you have set up coding environment in your computer: <br>
+
+Write the following commands in your terminal: <br><br>
+node --version, flutter --version, mongodb --version <br>
+
+![create_user1](https://user-images.githubusercontent.com/34074484/98465882-1f352e00-21dd-11eb-9cee-6f1735080e11.png)
+![create_user2](https://user-images.githubusercontent.com/34074484/98465883-20665b00-21dd-11eb-8e55-af4e22c07eae.png)
+![create_user3](https://user-images.githubusercontent.com/34074484/98465885-21978800-21dd-11eb-815e-4beb74eb5feb.png)
+![check_user1](https://user-images.githubusercontent.com/34074484/98465890-23614b80-21dd-11eb-8a50-cdad0e8134fd.png)
+![check_user2](https://user-images.githubusercontent.com/34074484/98465891-23f9e200-21dd-11eb-8fde-ee03d8e4aa48.png)
+![forget_password1](https://user-images.githubusercontent.com/34074484/98465892-252b0f00-21dd-11eb-9506-59be87b88862.png)
+![forget_password2](https://user-images.githubusercontent.com/34074484/98465894-265c3c00-21dd-11eb-85bf-7c9ff579299d.png)
+
+
+

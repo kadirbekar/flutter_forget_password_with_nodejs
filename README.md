@@ -5,6 +5,8 @@ If you want to test the project, make sure that you have set up coding environme
 Write the following commands in your terminal: <br><br>
 node --version, flutter --version, mongodb --version <br>
 
+In nodejs -> common -> common_methods -> common_methods.js directory don't forget to update sender information for sendMail method.<br>
+
 ![create_user1](https://user-images.githubusercontent.com/34074484/98465882-1f352e00-21dd-11eb-9cee-6f1735080e11.png)
 ![create_user2](https://user-images.githubusercontent.com/34074484/98465883-20665b00-21dd-11eb-8e55-af4e22c07eae.png)
 ![create_user3](https://user-images.githubusercontent.com/34074484/98465885-21978800-21dd-11eb-815e-4beb74eb5feb.png)

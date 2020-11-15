@@ -7,6 +7,7 @@ import 'package:forget_password/core/states/request_state.dart';
 import 'package:forget_password/locator.dart';
 
 class ApiService {
+  
   final requestState = locator<RequestState>();
   ResponseModel response = ResponseModel();
 

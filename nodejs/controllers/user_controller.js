@@ -1,12 +1,16 @@
 const User = require('../models/user_model')
 const common_methods = require('../common/common_methods/common_methods')
 const messages = require('../common/common_messages/return_messages')
+const bcrypt = require('bcrypt');
 
 //  add a new user into database
 const addNewUser = async (req, res) => {
     const user = new User(req.body)
     try {
         if (user) {
+
+            const encryptedPassword = await bcrypt.hash(req.body.password, 5)
+            user.password = encryptedPassword
             await user.save()
 
             //  user saved successfully
@@ -49,7 +53,7 @@ const forgetPassword = async (req, res) => {
                 common_methods.sendMail(req.params.mail, newPassword.toUpperCase())
                 return res.status(201).json({
                     ok: true,
-                    message: messages.returnMessages.MAIL_SUCCESS +" "+ newPassword.toUpperCase()
+                    message: messages.returnMessages.MAIL_SUCCESS + " " + newPassword.toUpperCase()
                 });
             }
 
@@ -71,25 +75,33 @@ const forgetPassword = async (req, res) => {
 //  check user
 const checkUser = async (req, res) => {
     try {
-        const user = await User.findOne({ mail:req.body.mail , password:req.body.password })
-
+        const user = await User.findOne({mail : req.body.mail});
         if (user) {
             //  user found
-            return res.status(200).json({
-                ok: true,
-                message: messages.returnMessages.VALID_USER
-            })
+            const match = await bcrypt.compare(req.body.password,user.password)
+            if(match) {
+                return res.status(200).json({
+                    ok: true,
+                    message: messages.returnMessages.VALID_USER
+                })
+            } else {
+                //user found, password was wrong
+                return res.status(404).json({
+                    ok: false,
+                    message: messages.returnMessages.INVALID_USER
+                })
+            }            
         } else {
             //  user not found
             return res.status(404).json({
-                ok:false,
-                message:messages.returnMessages.INVALID_USER
+                ok: false,
+                message: messages.returnMessages.INVALID_USER
             })
         }
     } catch (error) {
         return res.status(500).json({
-            ok:false,
-            message:messages.returnMessages.SERVER_ERROR
+            ok: false,
+            message: messages.returnMessages.SERVER_ERROR
         })
     }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forget_password/core/mixin/form_validator.dart';
 import 'package:forget_password/core/models/user_model.dart';
+import 'package:forget_password/core/reusable_widgets/message_dialog.dart';
 import 'package:forget_password/core/reusable_widgets/outlined_button.dart';
 import 'package:forget_password/core/reusable_widgets/show_dialog.dart';
 import 'package:forget_password/core/services/api_service.dart';
@@ -91,9 +92,11 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
             if (_formKey.currentState.validate()) {
               _formKey.currentState.save();
               Navigator.of(context).pop();
-              await apiService.saveUser(User(
+              await apiService
+                  .saveUser(User(
                       mail: _emailController.text,
-                      password: _passwordController.text)).then((value) {
+                      password: _passwordController.text))
+                  .then((value) {
                 showSnackbarMessage(value.message, value.ok ? true : false);
                 _emailController.clear();
                 _passwordController.clear();
@@ -124,7 +127,9 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
             if (_formKey.currentState.validate()) {
               _formKey.currentState.save();
               Navigator.of(context).pop();
-              await apiService.forgetPassword(_emailController.text).then((value) {
+              await apiService
+                  .forgetPassword(_emailController.text)
+                  .then((value) {
                 showSnackbarMessage(value.message, value.ok ? true : false);
                 _emailController.clear();
               });
@@ -179,29 +184,12 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
         ),
       );
 
-  showSnackbarMessage(String message, bool messageType) {
+  showSnackbarMessage(String message, bool isSuccess) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Row(
-        children: [
-          messageType
-              ? Icon(
-                  Icons.done_outline,
-                  color: Colors.green,
-                  size: 30,
-                )
-              : Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 30,
-                ),
-          const SizedBox(width: 20),
-          Text(
-            message,
-            style: Styles.instance.snackbarTitleStyle,
-          )
-        ],
-      ),
-      duration: Duration(milliseconds: 1100),
+      behavior: SnackBarBehavior.floating,
+      content: CustomMessageDialog.instance.showMessageDialog(
+      context: context, isSuccess: isSuccess, message: message),
+      duration: Duration(milliseconds: Styles.instance.snackbarMessageDuration),
     ));
   }
 }

@@ -1,5 +1,7 @@
 # Forget password in Flutter with Node.js and MongoDB
 
+For detailed explanation --> https://kadir-bekar.medium.com/forget-password-in-flutter-with-node-js-mongodb-6763922ef232 <br><br>
+
 If you want to test the project, make sure that you have set up coding environment in your computer: <br>
 
 Write the following commands in your terminal: <br><br>

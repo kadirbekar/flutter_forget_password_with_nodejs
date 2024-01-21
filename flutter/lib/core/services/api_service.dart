@@ -1,32 +1,39 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:forget_password/core/constants/app_constants.dart';
-import 'package:forget_password/core/models/response_model.dart';
-import 'package:forget_password/core/models/user_model.dart';
+import 'package:forget_password/core/models/request/forget_password_request_model.dart';
+import 'package:forget_password/core/models/response/response_model.dart';
+import 'package:forget_password/core/models/response/user_model.dart';
 import 'package:forget_password/core/states/request_state.dart';
 import 'package:forget_password/locator.dart';
 
 class ApiService {
-  
   final requestState = locator<RequestState>();
-  ResponseModel response = ResponseModel();
 
+  late final Dio _dio;
+
+  ApiService() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: AppConstants.API_URL,
+        contentType: AppConstants.CONTENT_TYPE,
+      ),
+    );
+  }
 
   //  add new user
-  Future<ResponseModel> saveUser(User user) async {
-    response = null;  
+  Future<ResponseModel> saveUser(UserModel user) async {
+    late ResponseModel response;
     try {
       requestState.makeStateBusy();
 
-      final request = await http.post(AppConstants.API_URL+AppConstants.ADD_NEW_USER,
-          headers: AppConstants.HEADERS,body: jsonEncode(user.toJson()));
-      if (request.statusCode == 200) {
-        response = ResponseModel.fromJson(json.decode(request.body));
-      } else {
-        response = ResponseModel.fromJson(json.decode(request.body));
-      }
+      final request = await _dio.post(
+        AppConstants.ADD_NEW_USER,
+        data: user.toJson(),
+      );
+
+      response = ResponseModel.fromJson(request.data);
     } catch (e) {
-      ResponseModel();
+      ResponseModel.commonErrorMessage();
     }
 
     requestState.makeStateNormal();
@@ -35,19 +42,18 @@ class ApiService {
 
   //  make a request to get new password
   Future<ResponseModel> forgetPassword(String mail) async {
-    response = null;
-    String body = '{"mail" : "$mail"}';
-    try {
+    late ResponseModel response;
 
+    try {
       requestState.makeStateBusy();
-      final request = await http.post(AppConstants.API_URL+AppConstants.FORGET_PASSWORD+"/$mail",headers: AppConstants.HEADERS,body: body);
-      if(request.statusCode == 201) {
-        response = ResponseModel.fromJson(json.decode(request.body));
-      } else {
-        response = ResponseModel.fromJson(json.decode(request.body));
-      }
+      final request = await _dio.post(
+        '${AppConstants.FORGET_PASSWORD + "/$mail"}',
+        data: ForgetPasswordRequestModel(mail: mail).toJson(),
+      );
+
+      response = ResponseModel.fromJson(request.data);
     } catch (e) {
-      return ResponseModel();
+      return ResponseModel.commonErrorMessage();
     }
 
     requestState.makeStateNormal();
@@ -56,20 +62,22 @@ class ApiService {
   }
 
   //  try to check the user if exist or not
-  Future<ResponseModel> checkUser(User user) async {
-    response = null;
+  Future<ResponseModel> checkUser(UserModel user) async {
+    late ResponseModel response;
     try {
-      final request = await http.post(AppConstants.API_URL+AppConstants.CHECK_USER,body: jsonEncode(user.toJson()),headers: AppConstants.HEADERS);
-      if(request.statusCode == 200) {
-        response = ResponseModel.fromJson(json.decode(request.body));
-      } else {
-        response = ResponseModel.fromJson(json.decode(request.body));
-      }
+      requestState.makeStateBusy();
 
+      final request = await _dio.post(
+        AppConstants.CHECK_USER,
+        data: user.toJson(),
+      );
+
+      response = ResponseModel.fromJson(request.data);
     } catch (e) {
-      return ResponseModel();
+      return ResponseModel.commonErrorMessage();
     }
+
+    requestState.makeStateNormal();
     return response;
   }
-
 }

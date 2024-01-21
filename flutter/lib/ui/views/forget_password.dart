@@ -4,17 +4,23 @@ import 'package:forget_password/core/reusable_widgets/text_form_field.dart';
 import 'package:forget_password/ui/shared/styles.dart';
 
 class ForgetPassword extends StatelessWidget with FormValidation {
+  const ForgetPassword({
+    Key? key,
+    required this.screenHeight,
+    required this.emailController,
+    required this.formKey,
+  }) : super(key: key);
+
   final double screenHeight;
   final TextEditingController emailController;
   final GlobalKey<FormState> formKey;
-  const ForgetPassword({Key key,this.screenHeight,this.emailController,this.formKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: screenHeight * 0.25,
       child: SingleChildScrollView(
-              child: Form(
+        child: Form(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           key: this.formKey,
           child: Column(

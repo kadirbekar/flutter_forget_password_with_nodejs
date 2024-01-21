@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forget_password/core/mixin/form_validator.dart';
-import 'package:forget_password/core/models/user_model.dart';
+import 'package:forget_password/core/models/response/user_model.dart';
 import 'package:forget_password/core/reusable_widgets/message_dialog.dart';
 import 'package:forget_password/core/reusable_widgets/outlined_button.dart';
 import 'package:forget_password/core/reusable_widgets/show_dialog.dart';
@@ -20,15 +20,23 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> with FormValidation {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
 
-  double screenWidth;
-  double screenHeight;
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+
+  double screenWidth = 0;
+  double screenHeight = 0;
 
   final apiService = locator<ApiService>();
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,16 +47,27 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: _scaffoldKey,
-        appBar: appbar,
+        appBar: AppBar(
+          title: Text(
+            "Forget Password with Node.js",
+            style: Styles.instance.snackbarTitleStyle,
+          ),
+          backgroundColor: Colors.teal,
+          centerTitle: true,
+        ),
         body: Consumer<RequestState>(
           builder: (context, requestState, widget) => requestState.isFetching
               ? Center(child: CircularProgressIndicator())
               : Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [Colors.orange[100], Colors.blueAccent[100]]),
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        Colors.orange,
+                        Colors.blueAccent,
+                      ],
+                    ),
                   ),
                   padding: const EdgeInsets.all(12),
                   alignment: Alignment.center,
@@ -58,9 +77,9 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
                     children: [
                       saveUser(requestState),
                       const SizedBox(height: 15),
-                      forgetPassword(requestState),
+                      forgetPassword(context),
                       const SizedBox(height: 15),
-                      checkUser(requestState),
+                      checkUser(context),
                     ],
                   ),
                 ),
@@ -69,40 +88,37 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
     );
   }
 
-  Widget get appbar => AppBar(
-        title: Text(
-          "Forget Password with Node.js",
-          style: Styles.instance.snackbarTitleStyle,
-        ),
-        backgroundColor: Colors.teal,
-        centerTitle: true,
-      );
-
   Widget saveUser(RequestState requestState) => DefaultOutlineButton(
         onPressed: () {
           CustomShowDialog.instance.showFormDialog(
-              context,
-              requestState,
-              SaveUser(
-                formKey: _formKey,
-                emailController: _emailController,
-                passwordController: _passwordController,
-                screenHeight: screenHeight,
-              ), acceptButton: () async {
-            if (_formKey.currentState.validate()) {
-              _formKey.currentState.save();
-              Navigator.of(context).pop();
-              await apiService
-                  .saveUser(User(
+            context: context,
+            acceptButton: () async {
+              if (_formKey.currentState?.validate() ?? false) {
+                _formKey.currentState?.save();
+                Navigator.of(context).pop();
+                await apiService
+                    .saveUser(
+                  UserModel(
                       mail: _emailController.text,
-                      password: _passwordController.text))
-                  .then((value) {
-                showSnackbarMessage(value.message, value.ok ? true : false);
-                _emailController.clear();
-                _passwordController.clear();
-              });
-            }
-          });
+                      password: _passwordController.text),
+                )
+                    .then((value) {
+                  showSnackbarMessage(
+                    value.message ?? '',
+                    value.ok ? true : false,
+                  );
+                  _emailController.clear();
+                  _passwordController.clear();
+                });
+              }
+            },
+            content: SaveUser(
+              formKey: _formKey,
+              emailController: _emailController,
+              passwordController: _passwordController,
+              screenHeight: screenHeight,
+            ),
+          );
         },
         height: screenHeight * 0.09,
         width: double.infinity,
@@ -115,26 +131,29 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
         ),
       );
 
-  Widget forgetPassword(RequestState requestState) => DefaultOutlineButton(
+  Widget forgetPassword(BuildContext context) => DefaultOutlineButton(
         onPressed: () {
           CustomShowDialog.instance.showFormDialog(
-              context,
-              requestState,
-              ForgetPassword(
-                  screenHeight: screenHeight,
-                  emailController: _emailController,
-                  formKey: _formKey), acceptButton: () async {
-            if (_formKey.currentState.validate()) {
-              _formKey.currentState.save();
-              Navigator.of(context).pop();
-              await apiService
-                  .forgetPassword(_emailController.text)
-                  .then((value) {
-                showSnackbarMessage(value.message, value.ok ? true : false);
-                _emailController.clear();
-              });
-            }
-          });
+            context: context,
+            acceptButton: () async {
+              if (_formKey.currentState?.validate() ?? false) {
+                _formKey.currentState?.save();
+                Navigator.of(context).pop();
+                await apiService
+                    .forgetPassword(_emailController.text)
+                    .then((value) {
+                  showSnackbarMessage(
+                      value.message ?? '', value.ok ? true : false);
+                  _emailController.clear();
+                });
+              }
+            },
+            content: ForgetPassword(
+              screenHeight: screenHeight,
+              emailController: _emailController,
+              formKey: _formKey,
+            ),
+          );
         },
         buttonLabel: 'Forget Password',
         height: screenHeight * 0.09,
@@ -147,31 +166,33 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
         ),
       );
 
-  Widget checkUser(RequestState requestState) => DefaultOutlineButton(
+  Widget checkUser(BuildContext context) => DefaultOutlineButton(
         onPressed: () {
           CustomShowDialog.instance.showFormDialog(
-              context,
-              requestState,
-              CheckUser(
-                formKey: _formKey,
-                emailController: _emailController,
-                passwordController: _passwordController,
-                screenHeight: screenHeight,
-              ), acceptButton: () async {
-            if (_formKey.currentState.validate()) {
-              _formKey.currentState.save();
-              Navigator.of(context).pop();
-              await apiService
-                  .checkUser(User(
-                      mail: _emailController.text,
-                      password: _passwordController.text))
-                  .then((value) {
-                showSnackbarMessage(value.message, value.ok ? true : false);
-                _emailController.clear();
-                _passwordController.clear();
-              });
-            }
-          });
+            context: context,
+            content: CheckUser(
+              formKey: _formKey,
+              emailController: _emailController,
+              passwordController: _passwordController,
+              screenHeight: screenHeight,
+            ),
+            acceptButton: () async {
+              if (_formKey.currentState?.validate() ?? false) {
+                _formKey.currentState?.save();
+                Navigator.of(context).pop();
+                await apiService
+                    .checkUser(UserModel(
+                        mail: _emailController.text,
+                        password: _passwordController.text))
+                    .then((value) {
+                  showSnackbarMessage(
+                      value.message ?? '', value.ok ? true : false);
+                  _emailController.clear();
+                  _passwordController.clear();
+                });
+              }
+            },
+          );
         },
         height: screenHeight * 0.09,
         width: double.infinity,
@@ -185,10 +206,13 @@ class _LoginPageState extends State<LoginPage> with FormValidation {
       );
 
   showSnackbarMessage(String message, bool isSuccess) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
       content: CustomMessageDialog.instance.showMessageDialog(
-      context: context, isSuccess: isSuccess, message: message),
+        context: context,
+        isSuccess: isSuccess,
+        message: message,
+      ),
       duration: Duration(milliseconds: Styles.instance.snackbarMessageDuration),
     ));
   }

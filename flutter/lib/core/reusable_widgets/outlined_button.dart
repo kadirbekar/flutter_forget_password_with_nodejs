@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 
-class DefaultOutlineButton extends StatefulWidget {
-  final String buttonLabel;
-  final Function onPressed;
-  final double height;
-  final double width;
-  final Color buttonBackgroundColor;
-  final TextStyle textStyle;
-  final Icon icon;
+class DefaultOutlineButton extends StatelessWidget {
   DefaultOutlineButton({
-    Key key,
-    this.buttonLabel,
-    this.onPressed,
+    Key? key,
+    required this.buttonLabel,
+    required this.onPressed,
     this.height,
     this.width,
     this.buttonBackgroundColor,
@@ -19,27 +12,32 @@ class DefaultOutlineButton extends StatefulWidget {
     this.icon,
   }) : super(key: key);
 
-  @override
-  _DefaultOutlineButtonState createState() => _DefaultOutlineButtonState();
-}
+  final String buttonLabel;
+  final void Function()? onPressed;
+  final double? height;
+  final double? width;
+  final Color? buttonBackgroundColor;
+  final TextStyle? textStyle;
+  final Icon? icon;
 
-class _DefaultOutlineButtonState extends State<DefaultOutlineButton> {
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: widget.buttonBackgroundColor ?? Colors.teal,
-        borderRadius: BorderRadius.circular(10)
+        borderRadius: BorderRadius.circular(10),
       ),
-      height: widget.height,
-      width: widget.width,
-      child: OutlineButton.icon(
-        icon: widget.icon ?? Icon(Icons.add),
-        label: Text(
-          widget.buttonLabel,
-          style: widget.textStyle,
+      height: height,
+      width: width,
+      child: ElevatedButton.icon(
+        style: ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(Colors.teal),
         ),
-        onPressed: widget.onPressed,
+        icon: icon ?? Icon(Icons.add),
+        label: Text(
+          buttonLabel,
+          style: textStyle,
+        ),
+        onPressed: onPressed,
       ),
     );
   }

@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 
 class MyTextFormField extends StatelessWidget {
-  final String label;
-  final String hint;
-  final TextEditingController controller;
-  final Widget prefixIcon;
-  final Function validator;
-  final TextInputType textInputType;
-  final bool showPassword;
-  final int maxLine;
   const MyTextFormField({
-    Key key,
+    Key? key,
+    required this.controller,
     this.label,
     this.hint,
-    this.controller,
     this.prefixIcon,
     this.validator,
     this.textInputType,
     this.showPassword,
-    this.maxLine
+    this.maxLine,
   }) : super(key: key);
+
+  final String? label;
+  final String? hint;
+  final TextEditingController controller;
+  final Widget? prefixIcon;
+  final String? Function(String?)? validator;
+  final TextInputType? textInputType;
+  final bool? showPassword;
+  final int? maxLine;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +35,7 @@ class MyTextFormField extends StatelessWidget {
         prefixIcon: this.prefixIcon,
         labelText: this.label,
         hintStyle: TextStyle(color: Colors.grey),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10)
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }

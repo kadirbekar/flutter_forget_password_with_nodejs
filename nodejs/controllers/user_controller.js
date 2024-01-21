@@ -36,21 +36,23 @@ const addNewUser = async (req, res) => {
 
 //  generate && send new password
 const forgetPassword = async (req, res) => {
-    const user = await User.findOne({ mail: req.params.mail })
-    console.log(user);
+    const user = await User.findOne({ mail: req.body.mail })
     try {
         if (user) {
             //  user found
             const newPassword = common_methods.generateRandomPassword()
-            const updatedUser = await User.findOneAndUpdate({ mail: req.params.mail }, {
+
+            const encryptedPassword = await bcrypt.hash(newPassword.toUpperCase(), 5)
+
+            const updatedUser = await User.findOneAndUpdate({ mail: req.body.mail }, {
                 $set: {
-                    password: newPassword.toUpperCase()
+                    password: encryptedPassword
                 }
             }, { lean: true })
 
             if (updatedUser) {
                 //  password updated successfully
-                common_methods.sendMail(req.params.mail, newPassword.toUpperCase())
+                common_methods.sendMail(req.body.mail, newPassword)
                 return res.status(201).json({
                     ok: true,
                     message: messages.returnMessages.MAIL_SUCCESS + " " + newPassword.toUpperCase()
@@ -75,11 +77,11 @@ const forgetPassword = async (req, res) => {
 //  check user
 const checkUser = async (req, res) => {
     try {
-        const user = await User.findOne({mail : req.body.mail});
+        const user = await User.findOne({ mail: req.body.mail });
         if (user) {
             //  user found
-            const match = await bcrypt.compare(req.body.password,user.password)
-            if(match) {
+            const match = await bcrypt.compare(req.body.password, user.password)
+            if (match) {
                 return res.status(200).json({
                     ok: true,
                     message: messages.returnMessages.VALID_USER
@@ -90,7 +92,7 @@ const checkUser = async (req, res) => {
                     ok: false,
                     message: messages.returnMessages.INVALID_USER
                 })
-            }            
+            }
         } else {
             //  user not found
             return res.status(404).json({

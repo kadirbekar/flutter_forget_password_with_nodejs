@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-const bcrypt = require('bcrypt');
 
 app.use(express.json()) //use json type
 require('./database/mongodb') //initialize mongoose

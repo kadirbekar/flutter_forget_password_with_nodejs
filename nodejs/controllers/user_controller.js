@@ -43,8 +43,13 @@ const forgetPassword = async (req, res) => {
             const newPassword = common_methods.generateRandomPassword()
 
             const encryptedPassword = await bcrypt.hash(newPassword.toUpperCase(), 5)
+            
+            /// instead of [req.body.mail], [user.mail] added for security vulnerabilities
+            /// thanks to mdisec -> https://www.youtube.com/watch?v=pdhIX-vOTgw&t=1s
 
-            const updatedUser = await User.findOneAndUpdate({ mail: req.body.mail }, {
+            const userMail = req.body.mail
+
+            const updatedUser = await User.findOneAndUpdate({ mail: userMail }, {
                 $set: {
                     password: encryptedPassword
                 }
@@ -52,7 +57,7 @@ const forgetPassword = async (req, res) => {
 
             if (updatedUser) {
                 //  password updated successfully
-                common_methods.sendMail(req.body.mail, newPassword)
+                common_methods.sendMail(userMail, newPassword)
                 return res.status(201).json({
                     ok: true,
                     message: messages.returnMessages.MAIL_SUCCESS + " " + newPassword.toUpperCase()
@@ -81,6 +86,8 @@ const checkUser = async (req, res) => {
         if (user) {
             //  user found
             const match = await bcrypt.compare(req.body.password, user.password)
+
+            //  correct password sent, user is in database
             if (match) {
                 return res.status(200).json({
                     ok: true,
